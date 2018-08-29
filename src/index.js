@@ -1,17 +1,51 @@
+
+import {
+  ConnectedRouter,
+  routerMiddleware,
+  connectRouter
+} from 'connected-react-router';
+
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './index.css';
-import App from './compenents/App';
+import ReactDOM from 'react-dom';
+import { createStore, compose } from 'redux';
+import reducers from './reducers';
+import { Provider } from 'react-redux';
+import { Route } from 'react-router-dom';
+// import App from './component/App';
+// import Detail from './component/Detail';
 import registerServiceWorker from './registerServiceWorker';
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
-import reducer from './reducers'
+import thunk from 'redux-thunk';
+// import Login from './component/Login';
+import Register from './components/Register';
 
+import { applyMiddleware } from 'redux';
+import createHistory from 'history/createBrowserHistory';
 
-const store = createStore(reducer)
+import { Switch } from 'react-router';
+const history = createHistory();
+
+const store = createStore(
+  connectRouter(history)(reducers),
+  compose(applyMiddleware(thunk, routerMiddleware(history)))
+);
+
+// ReactDOM.render(
+    // <Provider store={store}>
+        {/* <App /> */}
+    {/* </Provider>, document.getElementById('root')); */}
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
-    </Provider>, document.getElementById('root'));
+      <ConnectedRouter history={history}>
+        <Switch>
+          {/* <Route exact path="/" component={Login} /> */}
+          <Route path="/register" component={Register} />
+          {/* <Route path="/todo-detail/:id" component={Detail} /> */}
+          {/* <Route path="/todos" component={App} /> */}
+        </Switch>
+      </ConnectedRouter>
+    </Provider>,
+    document.getElementById('root')
+  );
 registerServiceWorker();
